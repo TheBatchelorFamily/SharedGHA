@@ -33,7 +33,7 @@ jobs:
 
     steps:
     - name: 'Checkout Github Action'
-      uses: actions/checkout@V3
+      uses: actions/checkout@v3
 
     - name: Install terraform
       uses: hashicorp/setup-terraform@v2
