@@ -33,7 +33,7 @@ jobs:
 
     steps:
     - name: Setup environment
-      run: export ${{ secrets.AWS_SECRETS }}
+      run: ${{ secrets.AWS_SECRETS }}
 
     - name: 'Checkout Github Action'
       uses: actions/checkout@v3
