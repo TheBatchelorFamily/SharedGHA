@@ -1,0 +1,51 @@
+---
+name: Terraform Deploy
+
+on:
+  workflow_call:
+    inputs:
+      checkoutBranch:
+        description: Branch or release to deploy
+        required: true
+      workingDirectory:
+        description: Directory containing terraform config
+        required: true
+    secrets:
+      AWS_SECRETS:
+        description: access keys for AWS formatted as environment variables
+        required: true
+      # AWS_ACCESS_KEY_ID:
+      #   description: temp
+      #   required: true
+      # AWS_SECRET_ACCESS_KEY:
+      #   description: temp
+      #   required: true
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+
+    env:
+      ${{ secrets.AWS_SECRETS }}
+      #AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    steps:
+    - name: 'Checkout Github Action'
+      uses: actions/checkout@V3
+
+    - name: Install terraform
+      uses: hashicorp/setup-terraform@v2
+
+    - name: Terraform Init
+      run: |
+        terraform init
+      working-directory: ${{ inputs.workingDirectory }}
+
+    - name: Terraform Plan
+      run: terraform plan -out main.tfplan
+      working-directory: ${{ inputs.workingDirectory }}
+
+    - name: Terraform Apply
+      run: terraform apply main.tfplan
+      working-directory: ${{ inputs.workingDirectory }}
