@@ -12,19 +12,11 @@ on:
         description: Directory containing terraform config
         required: true
         type: string
-    # secrets:
-    #   AWS_SECRETS:
-    #     description: access keys for AWS formatted as environment variables
-    #     required: true
-    #   AWS_ACCESS_KEY_ID:
-    #     description: temp
-    #     required: true
-    #   AWS_SECRET_ACCESS_KEY:
-    #     description: temp
-    #     required: true
+    secrets: inherit
 
 jobs:
   Build:
+    environment: terraform
     runs-on: ubuntu-latest
 
     # env:
