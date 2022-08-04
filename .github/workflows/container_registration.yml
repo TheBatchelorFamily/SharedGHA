@@ -2,31 +2,30 @@
 name: Container Registration
 
 on:
-  push:
-    workflow_call:
-      inputs:
-        containerDirectory:
-          description: Local directory where the DOCKERFILE is located
-          required: true
-          type: string
-        containerName:
-          description: Name of the container to register
-          required: true
-          type: string
-        containerRepo:
-          description: Name of the Docker repository for the registered container
-          type: string
-          required: true
-        containerVersion:
-          description: Release version for the container
-          type: string
-          required: true
-      secrets:
-        DOCKER_USER:
-          description: username for Docker's repository
-          required: true
-        DOCKER_PASSWORD:
-          description: password for Docker's repository
+  workflow_call:
+    inputs:
+      containerDirectory:
+        description: Local directory where the DOCKERFILE is located
+        required: true
+        type: string
+      containerName:
+        description: Name of the container to register
+        required: true
+        type: string
+      containerRepo:
+        description: Name of the Docker repository for the registered container
+        type: string
+        required: true
+      containerVersion:
+        description: Release version for the container
+        type: string
+        required: true
+    secrets:
+      DOCKER_USER:
+        description: username for Docker's repository
+        required: true
+      DOCKER_PASSWORD:
+        description: password for Docker's repository
 
 jobs:
   build_and_push:
