@@ -1,0 +1,58 @@
+---
+name: Container Registration
+
+on:
+  push:
+    workflow_call:
+      inputs:
+        containerDirectory:
+          description: Local directory where the DOCKERFILE is located
+          required: true
+          type: string
+        containerName:
+          description: Name of the container to register
+          required: true
+          type: string
+        containerRepo:
+          description: Name of the Docker repository for the registered container
+          type: string
+          required: true
+        containerVersion:
+          description: Release version for the container
+          type: string
+          required: true
+      secrets:
+        DOCKER_USER:
+          description: username for Docker's repository
+          required: true
+        DOCKER_PASSWORD:
+          description: password for Docker's repository
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+    
+      - name: Docker Login
+        uses: docker/login-action@v2.0.0
+        with:
+          username: ${{secrets.DOCKER_USER}}
+          password: ${{secrets.DOCKER_PASSWORD}}
+    
+      - name: Build the Docker image
+        run: |
+          docker build ${{ inputs.containerDirectory }} \
+            --tag "${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ containerVersion }}"
+
+      - name: Container scan
+        continue-on-error: true
+        uses: Azure/container-scan@v0.1
+        with:
+          image-name: ${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ containerVersion }}
+
+      - name: Push the Docker image
+        run: |
+          docker push ${{ inputs.containerRepo }}/${{ inputs.containerName }}:latest
+          docker push ${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ containerVersion }}
