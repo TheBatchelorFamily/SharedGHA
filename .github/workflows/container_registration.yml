@@ -58,5 +58,5 @@ jobs:
 
       - name: Push the Docker image
         run: |
-          docker push ${{ inputs.containerRepo }}/${{ inputs.containerName }}:latest
+          docker push ${{ inputs.containerRepo }}/${{ inputs.containerName }}:latest |
           docker push ${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ inputs.containerVersion }}
