@@ -46,7 +46,7 @@ jobs:
       - name: Build the Docker image
         run: |
           docker build ${{ inputs.containerDirectory }} \
-            --tag "${{ inputs.containerRepo }}/${{ inputs.containerName }}:latest"
+            --tag "${{ inputs.containerRepo }}/${{ inputs.containerName }}:latest" |
           docker build ${{ inputs.containerDirectory }} \
             --tag "${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ inputs.containerVersion }}"
 
