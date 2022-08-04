@@ -43,15 +43,15 @@ jobs:
       - name: Build the Docker image
         run: |
           docker build ${{ inputs.containerDirectory }} \
-            --tag "${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ containerVersion }}"
+            --tag "${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ inputs.containerVersion }}"
 
       - name: Container scan
         continue-on-error: true
         uses: Azure/container-scan@v0.1
         with:
-          image-name: ${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ containerVersion }}
+          image-name: ${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ inputs.containerVersion }}
 
       - name: Push the Docker image
         run: |
           docker push ${{ inputs.containerRepo }}/${{ inputs.containerName }}:latest
-          docker push ${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ containerVersion }}
+          docker push ${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ inputs.containerVersion }}
