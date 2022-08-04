@@ -46,8 +46,6 @@ jobs:
       - name: Build the Docker image
         run: |
           docker build ${{ inputs.containerDirectory }} \
-            --tag "${{ inputs.containerRepo }}/${{ inputs.containerName }}:latest" |
-          docker build ${{ inputs.containerDirectory }} \
             --tag "${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ inputs.containerVersion }}"
 
       - name: Container scan
@@ -58,5 +56,13 @@ jobs:
 
       - name: Push the Docker image
         run: |
-          docker push ${{ inputs.containerRepo }}/${{ inputs.containerName }}:latest |
           docker push ${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ inputs.containerVersion }}
+
+      - name: Build the Docker image
+        run: |
+          docker build ${{ inputs.containerDirectory }} \
+            --tag "${{ inputs.containerRepo }}/${{ inputs.containerName }}:latest"
+
+      - name: Push the Docker image
+        run: |
+          docker push ${{ inputs.containerRepo }}/${{ inputs.containerName }}:latest
