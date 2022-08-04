@@ -31,6 +31,9 @@ jobs:
   build_and_push:
     runs-on: ubuntu-latest
 
+    env:
+      DOCKLE_HOST: "unix:///var/run/docker.sock"
+
     steps:
       - uses: actions/checkout@v3
     
@@ -42,6 +45,8 @@ jobs:
     
       - name: Build the Docker image
         run: |
+          docker build ${{ inputs.containerDirectory }} \
+            --tag "${{ inputs.containerRepo }}/${{ inputs.containerName }}:latest"
           docker build ${{ inputs.containerDirectory }} \
             --tag "${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ inputs.containerVersion }}"
 
