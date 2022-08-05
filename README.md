@@ -1,10 +1,12 @@
 # SharedGHA
-A repository for shared github actions
+A repository for shared GitHub Actions
 
 ## Workflows
 
 ### General Usage
-* Unlike a typical github actions workflow, you do not specify the "runs-on" or any environment parameters, as these are provided within the re-usable workflow in this repository. You can also choose to simply inherit the secrets from the local repo that calls the workflow. That configuration is shown below, but you can alternatively map your secrets to the required secrets from the workflow similarly to the other inputs.
+* Unlike a typical GitHub actions workflow, you do not specify the "runs-on" or any environment parameters, as these are provided within the re-usable workflow in this repository.
+You can also choose to simply inherit the secrets from the local repository that calls the workflow.
+That configuration is shown below, but you can alternatively map your secrets to the required secrets from the workflow similarly to the other inputs.
   ```yaml
   jobs:
     Workflow_Name:
@@ -35,7 +37,10 @@ A repository for shared github actions
 
 * Overview
   
-  The module sets up the security group, the elastic ip, and the route53 entries for www and non-www URLs.
+  * Installs Terraform
+  * Initializes Terraform (installs modules, providers, backends, etc)
+  * Runs the `terraform plan` step to validat the configuration
+  * Runs the `terraform apply` step to actually create the specified infrastructure
 
 * Inputs
   
