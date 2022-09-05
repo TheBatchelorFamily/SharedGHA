@@ -47,7 +47,9 @@ jobs:
 
     - name: Add latest tag to tfvars
       if: ${{ inputs.deployLatestTag }} == true
-      run: echo "imageTag = $LATEST_TAG" >> terraform.tfvars
+      run: |
+        echo "imageTag = $LATEST_TAG" >> terraform.tfvars
+        cat terraform.tfvars
 
     - name: Install terraform
       uses: hashicorp/setup-terraform@v2
