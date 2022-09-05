@@ -39,11 +39,12 @@ jobs:
 
     - name: Find Latest Tag
       run: |
-        export LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+        export LATEST_TAG
+        $LATEST_TAG="$(git describe --tags `git rev-list --tags --max-count=1`)"
         echo "::set-env name=LATEST_TAG::$LATEST_TAG"
 
     - name: Add latest tag to tfvars
-      if: deployLatestTag == TRUE
+      if: ${{ deployLatestTag }} == true
       run: echo "imageTag = $LATEST_TAG" >> terraform.tfvars
 
     - name: Install terraform
