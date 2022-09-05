@@ -8,6 +8,11 @@ on:
         description: Branch or release to deploy
         required: true
         type: string
+      deployLatestTag:
+        default: false
+        description: Allow imageTag variable to be overridden with latest tag from repo
+        required: false
+        type: boolean
       workingDirectory:
         description: Directory containing terraform config
         required: true
@@ -31,6 +36,18 @@ jobs:
     steps:
     - name: 'Checkout Github Action'
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Find Latest Tag
+      run: |
+        export LATEST_TAG_GIT
+        LATEST_TAG_GIT=$(git describe --tags "$(git rev-list --tags --max-count=1)")
+        echo "LATEST_TAG=$LATEST_TAG_GIT" >> "$GITHUB_ENV"
+
+    - name: Add latest tag to tfvars
+      if: ${{ inputs.deployLatestTag }} == true
+      run: echo "imageTag = $LATEST_TAG" >> terraform.tfvars
 
     - name: Install terraform
       uses: hashicorp/setup-terraform@v2
