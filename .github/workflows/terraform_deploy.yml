@@ -41,9 +41,9 @@ jobs:
 
     - name: Find Latest Tag
       run: |
-        export LATEST_TAG
-        LATEST_TAG=$(git describe --tags "$(git rev-list --tags --max-count=1)")
-        echo "::set-env name=LATEST_TAG::$LATEST_TAG"
+        export LATEST_TAG_GIT
+        LATEST_TAG_GIT=$(git describe --tags "$(git rev-list --tags --max-count=1)")
+        echo "LATEST_TAG=$LATEST_TAG_GIT" >> $GITHUB_ENV
 
     - name: Add latest tag to tfvars
       if: ${{ inputs.deployLatestTag }} == true
