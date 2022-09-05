@@ -48,6 +48,7 @@ jobs:
     - name: Add latest tag to tfvars
       if: ${{ inputs.deployLatestTag }} == true
       run: |
+        touch terraform.tfvars
         echo "imageTag = $LATEST_TAG" >> terraform.tfvars
         cat terraform.tfvars
 
