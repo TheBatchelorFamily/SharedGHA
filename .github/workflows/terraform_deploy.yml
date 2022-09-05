@@ -49,7 +49,7 @@ jobs:
       if: ${{ inputs.deployLatestTag }} == true
       run: |
         touch terraform.tfvars
-        echo "imageTag = \"$LATEST_TAG\" >> terraform.tfvars
+        echo "imageTag = \"$LATEST_TAG\"" >> terraform.tfvars
         cat terraform.tfvars
       working-directory: ${{ inputs.workingDirectory }}
 
