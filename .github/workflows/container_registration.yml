@@ -35,10 +35,10 @@ jobs:
       DOCKLE_HOST: "unix:///var/run/docker.sock"
 
     steps:
-      - uses: actions/checkout@v3
-    
+      - uses: actions/checkout@v4
+      
       - name: Docker Login
-        uses: docker/login-action@v2.0.0
+        uses: docker/login-action@v3
         with:
           username: ${{secrets.DOCKER_USER}}
           password: ${{secrets.DOCKER_PASSWORD}}
@@ -46,7 +46,8 @@ jobs:
       - name: Build the Docker image
         run: |
           docker build ${{ inputs.containerDirectory }} \
-            --tag "${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ inputs.containerVersion }}"
+            --tag "${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ inputs.containerVersion }}" \
+            --tag "${{ inputs.containerRepo }}/${{ inputs.containerName }}:latest"
 
       - name: Container scan
         continue-on-error: true
@@ -54,15 +55,10 @@ jobs:
         with:
           image-name: ${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ inputs.containerVersion }}
 
-      - name: Push the Docker image
+      - name: Push the Docker image (version tag)
         run: |
           docker push ${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ inputs.containerVersion }}
 
-      - name: Build the Docker image
-        run: |
-          docker build ${{ inputs.containerDirectory }} \
-            --tag "${{ inputs.containerRepo }}/${{ inputs.containerName }}:latest"
-
-      - name: Push the Docker image
+      - name: Push the Docker image (latest tag)
         run: |
           docker push ${{ inputs.containerRepo }}/${{ inputs.containerName }}:latest
