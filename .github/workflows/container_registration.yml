@@ -36,24 +36,28 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Docker Login
         uses: docker/login-action@v3
         with:
           username: ${{secrets.DOCKER_USER}}
           password: ${{secrets.DOCKER_PASSWORD}}
-    
+
       - name: Build the Docker image
         run: |
           docker build ${{ inputs.containerDirectory }} \
             --tag "${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ inputs.containerVersion }}" \
             --tag "${{ inputs.containerRepo }}/${{ inputs.containerName }}:latest"
 
-      - name: Container scan
-        continue-on-error: true
-        uses: Azure/container-scan@v0.1
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.28.0
         with:
-          image-name: ${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ inputs.containerVersion }}
+          image-ref: ${{ inputs.containerRepo }}/${{ inputs.containerName }}:${{ inputs.containerVersion }}
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
 
       - name: Push the Docker image (version tag)
         run: |
