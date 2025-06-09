@@ -32,41 +32,36 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
-    - name: 'Checkout Github Action'
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+      - name: "Checkout Github Action"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-    - name: Find Latest Tag
-      run: |
-        export LATEST_TAG_GIT
-        LATEST_TAG_GIT=$(git describe --tags "$(git rev-list --tags --max-count=1)")
-        echo "LATEST_TAG=$LATEST_TAG_GIT" >> "$GITHUB_ENV"
+      - name: Find Latest Tag
+        run: |
+          export LATEST_TAG_GIT
+          LATEST_TAG_GIT=$(git describe --tags "$(git rev-list --tags --max-count=1)")
+          echo "LATEST_TAG=$LATEST_TAG_GIT" >> "$GITHUB_ENV"
 
-    - name: Add latest tag to tfvars
-      if: ${{ inputs.deployLatestTag }} == true
-      run: |
-        touch terraform.tfvars
-        echo "image_tag = \"$LATEST_TAG\"" >> terraform.tfvars
-      working-directory: ${{ inputs.workingDirectory }}
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v2
 
-    - name: Install terraform
-      uses: hashicorp/setup-terraform@v2
+      - name: Terraform Init
+        run: |
+          terraform init
+        working-directory: ${{ inputs.workingDirectory }}
 
-    - name: Terraform Init
-      run: |
-        terraform init
-      working-directory: ${{ inputs.workingDirectory }}
+      - name: Terraform Plan
+        env:
+          TF_VAR_image_tag: ${{ env.LATEST_TAG }}
+        run: terraform plan -out main.tfplan
+        working-directory: ${{ inputs.workingDirectory }}
 
-    - name: Terraform Plan
-      run: terraform plan -out main.tfplan
-      working-directory: ${{ inputs.workingDirectory }}
-
-    - name: Upload plan file
-      uses: actions/upload-artifact@v4
-      with:
-        name: tfplan
-        path: ${{ inputs.workingDirectory }}/main.tfplan
+      - name: Upload plan file
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: ${{ inputs.workingDirectory }}/main.tfplan
 
   apply:
     needs: plan
@@ -77,25 +72,25 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
-    - name: 'Checkout Github Action'
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+      - name: "Checkout Github Action"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-    - name: Install terraform
-      uses: hashicorp/setup-terraform@v2
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v2
 
-    - name: Terraform Init
-      run: |
-        terraform init
-      working-directory: ${{ inputs.workingDirectory }}
+      - name: Terraform Init
+        run: |
+          terraform init
+        working-directory: ${{ inputs.workingDirectory }}
 
-    - name: Download plan file
-      uses: actions/download-artifact@v4
-      with:
-        name: tfplan
-        path: ${{ inputs.workingDirectory }}
+      - name: Download plan file
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: ${{ inputs.workingDirectory }}
 
-    - name: Terraform Apply
-      run: terraform apply main.tfplan
-      working-directory: ${{ inputs.workingDirectory }}
+      - name: Terraform Apply
+        run: terraform apply main.tfplan
+        working-directory: ${{ inputs.workingDirectory }}
