@@ -37,12 +37,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Find Latest Tag
-        run: |
-          export LATEST_TAG_GIT
-          LATEST_TAG_GIT=$(git describe --tags "$(git rev-list --tags --max-count=1)")
-          echo "LATEST_TAG=$LATEST_TAG_GIT" >> "$GITHUB_ENV"
-
       - name: Install terraform
         uses: hashicorp/setup-terraform@v2
 
@@ -51,9 +45,15 @@ jobs:
           terraform init
         working-directory: ${{ inputs.workingDirectory }}
 
+      - name: Find Latest Tag
+        id: latest_tag
+        run: |
+          LATEST_TAG_GIT=$(git describe --tags "$(git rev-list --tags --max-count=1)")
+          echo "latest_tag=$LATEST_TAG_GIT" >> "$GITHUB_OUTPUT"
+
       - name: Terraform Plan
         env:
-          TF_VAR_image_tag: ${{ env.LATEST_TAG }}
+          TF_VAR_image_tag: ${{ steps.latest_tag.outputs.latest_tag }}
         run: terraform plan -out main.tfplan
         working-directory: ${{ inputs.workingDirectory }}
 
